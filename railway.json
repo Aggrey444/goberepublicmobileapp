@@ -1,12 +1,11 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS"
+    "builder": "DOCKERFILE"
   },
   "deploy": {
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,
-    "startCommand": "php artisan migrate --force --no-interaction && php artisan db:seed --force --no-interaction && php artisan serve --host=0.0.0.0 --port=$PORT",
     "healthcheckPath": "/api/v1/products",
     "healthcheckTimeout": 300
   },
@@ -20,6 +19,7 @@
     "SESSION_DRIVER": "database",
     "CACHE_STORE": "database",
     "FILESYSTEM_DISK": "local",
+    "RUN_MIGRATIONS": "true",
     "ADMIN_EMAIL": "admin@gobe.com",
     "ADMIN_PASSWORD": "password"
   }
