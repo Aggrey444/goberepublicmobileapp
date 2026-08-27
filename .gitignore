@@ -35,3 +35,10 @@ Thumbs.db
 
 # IDE
 *.swp
+
+# Hostinger deploy artifacts (local only)
+/gobe-production.zip
+/gobe-deploy-seagreen.zip
+/_public_html/
+/deploy_setup.sh
+/.env.production.template
