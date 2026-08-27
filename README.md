@@ -2,7 +2,7 @@
 
 A full-stack e-commerce/ordering system for GOBE Republic with three parts:
 
-- **`backend/`** — Laravel 12 + Sanctum REST API **and** a Laravel Blade admin dashboard
+- **repo root (Laravel)** — Laravel 12 + Sanctum REST API **and** a Laravel Blade admin dashboard
 - **`mobile/`** — Expo SDK 57 (React Native) customer mobile app with Expo Router
 - **`docs/`** — API reference (`API.md`) and Hostinger deployment guide (`DEPLOYMENT.md`)
 
@@ -47,10 +47,10 @@ notifications, device tokens, and the full admin API.
 
 ## Local setup (Windows)
 
-### Backend
+### Backend (Laravel is at the repo root)
 
 ```bash
-cd backend
+# from repo root
 copy .env.example .env
 # set DB_CONNECTION=sqlite, APP_URL=http://localhost:8000
 
@@ -70,7 +70,6 @@ php artisan serve                     # http://127.0.0.1:8000
 ### Tests
 
 ```bash
-cd backend
 vendor/bin/phpunit
 ```
 
@@ -104,7 +103,7 @@ npm start          # Expo dev server
 ## Project structure
 
 ```
-backend/app/
+app/
   Http/Controllers/Api/        # customer API
   Http/Controllers/Admin/      # admin token API
   Http/Controllers/AdminWeb/   # Blade admin dashboard

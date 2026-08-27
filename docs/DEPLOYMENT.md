@@ -5,7 +5,7 @@ and building the Expo mobile app with EAS. It is written for the production envi
 
 - `APP_ENV=production`, `APP_DEBUG=false`
 - **MySQL** database (Hostinger), not SQLite
-- Web server serves only `backend/public`
+- Web server serves only `public/`
 - All secrets via environment variables, never committed
 
 ---
@@ -13,11 +13,14 @@ and building the Expo mobile app with EAS. It is written for the production envi
 ## 1. Repo layout
 
 ```
-gobe-republic/
-├── backend/   # Laravel 12 API + Blade admin dashboard
+gobe-republic/                  # Laravel lives at the repo ROOT (good for Hostinger Git deploy)
+├── app/  bootstrap/  config/  database/  public/  routes/  ...   # Laravel backend + Blade admin
 ├── mobile/    # Expo SDK 57 (React Native) customer app
 └── docs/      # This guide + API reference
 ```
+
+Because Laravel is at the repo root, Hostinger's Git integration can deploy it straight to a
+document root: the web-app content (the `public/` dir) sits at `<webroot>/public/index.php`.
 
 ---
 
@@ -26,50 +29,54 @@ gobe-republic/
 ### 2.1 Prepare the package locally
 
 ```bash
-cd backend
+# from repo root
 composer install --no-dev --optimize-autoloader
 ```
 
 Configure production values in a **local copy** of `.env` (see section 3) but do **not** ship
 `.env` changes to the repo. The final `.env` lives only on the server.
 
-### 2.2 Create the Hostinger sub-domain (e.g. `api.goberepublic.com`)
+### 2.2 Create the Hostinger sub-domain
 
-In Hostinger's hPanel:
-1. **Domains → Subdomains** → add `api` pointing to `public_html/api`.
-2. This creates `public_html/api/public_html` — a common confusing layout.
-   The Laravel web root must be the `backend/public` directory.
+In Hostinger's hPanel: **Domains → Subdomains** → add e.g. `api`
+(or `shop` if the backend doubles as the web app) pointing to a folder you choose, e.g.
+`public_html/api`. This becomes the deploy target.
 
-### 2.3 Upload
+### 2.3 Deploy via Hostinger Git integration (recommended)
 
-Upload the `backend` directory contents to `public_html/api/` via FTP/SFTP/File Manager.
+Because **Laravel + its `public/` dir are at the repo root**, Git integration works cleanly:
 
-The key requirement: **the server must serve `backend/public/index.php`**.
-Two supported layouts:
+1. Push the repo to GitHub (done — `https://github.com/Aggrey444/goberepublicmobileapp`).
+2. In hPanel → **Websites → (your site) → Git** → connect the repo, select the deploy branch
+   (e.g. `master`), and set the **deploy path** to the sub-domain folder (e.g. `public_html/api`).
+3. The pull places `app/`, `bootstrap/`, `config/`, … `public/` directly under that folder.
 
-**Option A (recommended) — put Laravel below docroot and symlink `public`:**
-```
-public_html/api/
-├── app/  bootstrap/  config/  database/  routes/  ...   (Laravel root)
-└── public_html/                                            (symlink -> public/)
-```
-From hPanel File Manager create a **symbolic link** named `public_html` inside
-`public_html/api/` that points to `public_html/api/public`.
+Confirm the web root points at `.../api/public/index.php`:
 
-**Option B — move `public` contents to docroot:**
-Copy the contents of `backend/public` into `public_html/api/` and adjust relative paths
-in `index.php` to point one level up (e.g. `require __DIR__.'/../vendor/autoload.php';`).
+- hPanel **Websites → (site) → Manage → Files**, or **Domains → Subdomains → (subdomain) →
+  Document root** set to the `public` directory. On Hostinger, set the sub-domain's document
+  root to a subfolder such that `public/index.php` is the front controller:
+  `public_html/api/public`.
 
-> Ask Hostinger support if you cannot create symlinks on your plan.
+If your plan won't point a sub-domain document root into a subfolder, use the symlink or
+docroot-copy approach under **2.4**.
 
-### 2.4 Server configuration (htaccess)
+### 2.4 Alternative (no Git integration): upload + make `public` the web root
 
-`backend/public/.htaccess` (already shipped) enables `public/index.php` as the front
-controller. Ensure `mod_rewrite` is on (default on Hostinger).
+Upload the repo (Laravel is at the root) into `public_html/api/`. Then ensure the server serves
+`.../api/public/index.php`:
+
+- **Preferred:** point the sub-domain document root at `.../api/public`.
+- **Or symlink:** from hPanel File Manager, create a symbolic link named `public_html` inside
+  `public_html/api/` pointing to `public_html/api/public`. Ask Hostinger support if symlinks
+  aren't available.
+
+`public/.htaccess` (already shipped) enables `public/index.php` as the front controller.
+Ensure `mod_rewrite` is on (default on Hostinger).
 
 ### 2.5 Environment + storage permissions
 
-Create `public_html/api/.env` with the production values (section 3), then:
+Create `.env` at the Laravel root (`public_html/api/.env`) with production values (section 3), then:
 
 ```bash
 cd public_html/api
@@ -83,12 +90,14 @@ php artisan migrate --force
 php artisan db:seed --force          # creates the first admin + categories + products
 ```
 
-> Re-run `config:cache`/`route:cache` after any code change.
+> Re-run `config:cache`/`route:cache` after any code change, and `git pull` + the caches after
+> each Hostinger Git sync.
 
 ### 2.6 Confirm
 
 - `https://api.goberepublic.com/api/v1/products` returns JSON.
 - `https://api.goberepublic.com/admin/login` loads the dashboard.
+
 
 ---
 

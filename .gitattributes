@@ -1,6 +1,18 @@
 # Normalize line endings for text files across platforms
 * text=auto
 
+# Diff semantics (Laravel)
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+
+# Exclude from archives
+/.github export-ignore
+CHANGELOG.md export-ignore
+.styleci.yml export-ignore
+
 # Source code
 *.php text eol=lf
 *.ts text eol=lf

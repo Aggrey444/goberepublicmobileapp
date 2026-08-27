@@ -131,7 +131,7 @@ Admin endpoints are prefixed `/admin` and require a token from `POST /admin/logi
 ## Web admin dashboard
 
 Browser-based dashboard at `/admin/login` (session auth). Endpoints live under
-`routes/web.php` and are served by the Blade views in `backend/resources/views/admin`.
+`routes/web.php` and are served by the Blade views in `resources/views/admin`.
 
 ---
 

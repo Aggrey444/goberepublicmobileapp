@@ -1,18 +1,37 @@
+# Laravel (repo root)
+/logs
+/logs/*
+!.gitignore
+/vendor
+/node_modules
+/public/build
+/public/storage
+/storage/*.key
+/storage/pail
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+
+# Laravel auth
+/auth.json
+.phpactor.json
+
 # OS
 .DS_Store
 Thumbs.db
 
-# IDE
-.vscode/
-.idea/
-*.swp
-
 # Logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Root-level composer leftovers (each sub-project is self-contained)
-/vendor
-/composer.lock
+# IDE
+*.swp
